@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(timeout 3 bash:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run db:init:*)",
+      "Bash(cat:*)",
+      "Bash(del \"c:\\Users\\pedro\\Downloads\\NextFlow\\constants.ts\")",
+      "Bash(npm uninstall:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

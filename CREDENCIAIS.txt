@@ -1,0 +1,149 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                    NEXTFLOW DASHBOARD                         ║
+║                  SISTEMA PRONTO PARA VENDA                    ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📧 CREDENCIAIS PADRÃO DO ADMINISTRADOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Email:    admin@nextflow.com
+Senha:    admin123
+
+⚠️  IMPORTANTE: Altere a senha após o primeiro login!
+
+
+🗄️  BANCO DE DADOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Tipo:         SQLite
+Localização:  ./db/nextflow.db
+Status:       ✅ ZERADO (pronto para uso)
+
+
+🚀 COMANDOS RÁPIDOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Instalar:          npm install
+Inicializar DB:    npm run db:init
+Executar Sistema:  npm run dev
+Visualizar DB:     npm run db:studio
+Build Produção:    npm run build
+
+
+🌐 ACESSO LOCAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+URL: http://localhost:3000
+(Se porta 3000 ocupada, usará 3001 automaticamente)
+
+
+📊 DADOS DO SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Clientes:    0 (zerado)
+Planos:      0 (zerado)
+Faturas:     0 (zerado)
+Servidores:  0 (zerado)
+Usuários:    1 (admin padrão)
+Templates:   0 (zerado)
+
+
+✨ FUNCIONALIDADES IMPLEMENTADAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Dashboard com métricas em tempo real
+✅ Gerenciamento de clientes IPTV
+✅ Gerenciamento de planos
+✅ Sistema financeiro completo
+✅ Integração WhatsApp (templates e histórico)
+✅ Gerenciamento de usuários (Admin/Cliente)
+✅ Gerenciamento de servidores (MikroTik/Radius)
+✅ Botão Mostrar/Ocultar valores sensíveis
+✅ Exportação de relatórios (CSV)
+✅ API REST completa
+✅ Banco de dados real SQLite
+✅ Interface responsiva (mobile/desktop)
+
+
+📡 ENDPOINTS DA API
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GET    /api/clients       - Listar clientes
+POST   /api/clients       - Criar cliente
+PUT    /api/clients/:id   - Atualizar cliente
+DELETE /api/clients/:id   - Deletar cliente
+
+GET    /api/plans         - Listar planos
+POST   /api/plans         - Criar plano
+PUT    /api/plans/:id     - Atualizar plano
+DELETE /api/plans/:id     - Deletar plano
+
+GET    /api/invoices      - Listar faturas
+POST   /api/invoices      - Criar fatura
+PUT    /api/invoices/:id  - Atualizar fatura
+DELETE /api/invoices/:id  - Deletar fatura
+
+GET    /api/servers       - Listar servidores
+POST   /api/servers       - Criar servidor
+PUT    /api/servers/:id   - Atualizar servidor
+DELETE /api/servers/:id   - Deletar servidor
+
+GET    /api/users         - Listar usuários
+POST   /api/users         - Criar usuário
+PUT    /api/users/:id     - Atualizar usuário
+DELETE /api/users/:id     - Deletar usuário
+
+GET    /api/templates     - Listar templates
+POST   /api/templates     - Criar template
+PUT    /api/templates/:id - Atualizar template
+DELETE /api/templates/:id - Deletar template
+
+GET    /api/messages      - Listar mensagens
+POST   /api/messages      - Criar mensagem
+
+GET    /api/transactions  - Listar transações
+POST   /api/transactions  - Criar transação
+
+
+📚 DOCUMENTAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INICIO_RAPIDO.md        - Guia de início rápido
+DATABASE.md             - Documentação do banco de dados
+PRONTO_PARA_VENDA.md    - Informações de produção
+CREDENCIAIS.txt         - Este arquivo
+
+
+🔒 SEGURANÇA (PARA PRODUÇÃO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TODO:
+[ ] Implementar JWT ou sessions
+[ ] Usar bcrypt para hash de senhas
+[ ] Adicionar validação de inputs
+[ ] Configurar rate limiting
+[ ] Usar HTTPS
+[ ] Configurar CORS
+[ ] Implementar logs
+[ ] Sistema de backup automático
+
+
+💾 BACKUP DO BANCO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Windows:  copy db\nextflow.db db\backup.db
+Linux:    cp db/nextflow.db db/backup.db
+
+
+🔄 RESETAR SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Windows:  del db\nextflow.db && npm run db:init
+Linux:    rm db/nextflow.db && npm run db:init
+
+
+✅ STATUS DO SISTEMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Banco de dados: SQLite (real)
+✅ Dados mock: REMOVIDOS
+✅ Sistema: ZERADO
+✅ API REST: FUNCIONANDO
+✅ Interface: COMPLETA
+✅ Documentação: COMPLETA
+
+🎉 PRONTO PARA VENDA! 🎉
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║  Sistema desenvolvido para gestão de clientes IPTV           ║
+║  Tecnologias: React 19.2 + TypeScript + SQLite + Vite       ║
+╚═══════════════════════════════════════════════════════════════╝
