@@ -1,6 +1,6 @@
-# ⚡ NextFlow
+# ⚡ NextFlow Dashboard
 
-**Sistema completo de gerenciamento para revendedores de IPTV**
+**Sistema completo de gerenciamento de IPTV**
 
 ![NextFlow](https://img.shields.io/badge/Status-Pronto%20para%20Venda-success?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react)
