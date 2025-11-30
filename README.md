@@ -1,4 +1,4 @@
-# ⚡ NextFlow Dashboard
+# ⚡ NextFlow
 
 **Sistema completo de gerenciamento para revendedores de IPTV**
 

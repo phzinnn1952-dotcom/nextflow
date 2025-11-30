@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Plus, Edit2, Trash2, X, Check, AlertTriangle, Mail, User as UserIcon, Shield, ChevronDown, Calendar } from "lucide-react";
-import { USERS_DATA } from "../constants";
 import { User } from "../types";
 
-export const UsersView: React.FC = () => {
-  // Main Data State
-  const [users, setUsers] = useState<User[]>(USERS_DATA);
+interface UsersViewProps {
+  users: User[];
+  onUsersChange: (nextUsers: User[]) => void;
+}
+
+export const UsersView: React.FC<UsersViewProps> = ({ users, onUsersChange }) => {
 
   // Modal States
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -63,25 +65,29 @@ export const UsersView: React.FC = () => {
 
   const handleSaveUser = () => {
     if (editingUser) {
-      // Update existing
-      setUsers(users.map(u => u.id === editingUser.id ? {
-        ...u,
-        name: userForm.name,
-        email: userForm.email,
-        role: userForm.role,
-        status: userForm.status
-      } : u));
+      const updatedUsers = users.map(u =>
+        u.id === editingUser.id
+          ? {
+              ...u,
+              name: userForm.name,
+              email: userForm.email,
+              role: userForm.role,
+              status: userForm.status
+            }
+          : u
+      );
+      onUsersChange(updatedUsers);
     } else {
-      // Create new
       const newUser: User = {
-        id: Math.random().toString(),
+        id: Math.random().toString(36).slice(2),
         name: userForm.name,
         email: userForm.email,
+        password: userForm.password,
         role: userForm.role,
         status: userForm.status,
         createdAt: new Date().toLocaleDateString('pt-BR')
       };
-      setUsers([...users, newUser]);
+      onUsersChange([...users, newUser]);
     }
     setIsUserModalOpen(false);
     resetForm();
@@ -94,7 +100,7 @@ export const UsersView: React.FC = () => {
 
   const confirmDelete = () => {
     if (userToDelete) {
-      setUsers(users.filter(u => u.id !== userToDelete));
+      onUsersChange(users.filter(u => u.id !== userToDelete));
       setDeleteModalOpen(false);
       setUserToDelete(null);
     }
@@ -146,7 +152,7 @@ export const UsersView: React.FC = () => {
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Gerenciar Usuários</h1>
           <p className="text-sm md:text-base text-gray-400">
-            Gerencie os usuários e permissões do sistema
+            Gerencie os usu├írios e permiss├Áes do sistema
           </p>
         </div>
 
@@ -202,7 +208,7 @@ export const UsersView: React.FC = () => {
       <div className="bg-[#1a1a1a] rounded-2xl border border-[#252525] overflow-hidden">
         <div className="p-6 border-b border-[#252525]">
           <h2 className="text-xl font-bold text-white">Lista de Usuários</h2>
-          <p className="text-sm text-gray-400 mt-1">Gerencie todos os usuários do sistema</p>
+          <p className="text-sm text-gray-400 mt-1">Gerencie todos os usu├írios do sistema</p>
         </div>
 
         <div className="overflow-x-auto">
@@ -211,10 +217,10 @@ export const UsersView: React.FC = () => {
               <tr className="border-b border-[#252525] bg-[#0f0f0f]/50">
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Usuário</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Função</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Fun├º├úo</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Criado em</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Ações</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">A├º├Áes</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#252525]">
@@ -274,8 +280,8 @@ export const UsersView: React.FC = () => {
               ) : (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                    <p className="text-base font-medium">Nenhum usuário encontrado</p>
-                    <p className="text-sm mt-1">Adicione um novo usuário para começar</p>
+                    <p className="text-base font-medium">Nenhum usu├írio encontrado</p>
+                    <p className="text-sm mt-1">Adicione um novo usu├írio para come├ºar</p>
                   </td>
                 </tr>
               )}
@@ -313,7 +319,7 @@ export const UsersView: React.FC = () => {
                       type="text"
                       value={userForm.name}
                       onChange={(e) => setUserForm({...userForm, name: e.target.value})}
-                      placeholder="Ex: João da Silva"
+                      placeholder="Ex: Jo├úo da Silva"
                       className="w-full bg-[#0f0f0f] border border-[#333] text-white text-sm rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-gray-600"
                     />
                   </div>
@@ -342,15 +348,15 @@ export const UsersView: React.FC = () => {
                       type="password"
                       value={userForm.password}
                       onChange={(e) => setUserForm({...userForm, password: e.target.value})}
-                      placeholder="••••••••"
+                      placeholder="ÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇóÔÇó"
                       className="w-full bg-[#0f0f0f] border border-[#333] text-white text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-gray-600"
                     />
                   </div>
                 )}
 
-                {/* Função */}
+                {/* Fun├º├úo */}
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-gray-300">Função</label>
+                  <label className="text-sm font-medium text-gray-300">Fun├º├úo</label>
                   <div className="relative">
                     <button
                       type="button"
@@ -465,7 +471,7 @@ export const UsersView: React.FC = () => {
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">Excluir Usuário</h3>
                 <p className="text-gray-400 text-sm">
-                  Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.
+                  Tem certeza que deseja excluir este usu├írio? Esta a├º├úo n├úo pode ser desfeita.
                 </p>
               </div>
               <div className="flex gap-3 w-full mt-2">

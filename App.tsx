@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { MetricGrid } from "./components/MetricCards";
@@ -12,39 +12,68 @@ import { WhatsAppView } from "./components/WhatsAppView";
 import { UsersView } from "./components/UsersView";
 import { ServersView } from "./components/ServersView";
 import { LoginView } from "./components/LoginView";
+import { User } from "./types";
+import { SIDEBAR_ITEMS, USERS_DATA } from "./constants";
 
 const App: React.FC = () => {
-  // Estado de autenticação - mude para false para ver a tela de login
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [users, setUsers] = useState<User[]>(USERS_DATA);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showValues, setShowValues] = useState(true);
   const [currentView, setCurrentView] = useState("Dashboard");
+  const isAuthenticated = Boolean(currentUser);
 
-  const handleLogin = (email: string, password: string, remember: boolean) => {
-    console.log("Tentando fazer login:", { email, password, remember });
-
-    // Simulação de autenticação - aceita qualquer email e senha
-    if (email && password) {
-      console.log("Login bem-sucedido!");
-      setIsAuthenticated(true);
-      if (remember) {
-        localStorage.setItem('rememberMe', 'true');
-      }
+  const handleLogin = (user: User, remember: boolean) => {
+    console.log("Tentando fazer login:", user);
+    setCurrentUser(user);
+    if (remember) {
+      localStorage.setItem("rememberMe", user.email);
     } else {
-      console.log("Login falhou - campos vazios");
+      localStorage.removeItem("rememberMe");
     }
   };
 
   const handleLogout = () => {
     console.log("Fazendo logout");
-    setIsAuthenticated(false);
-    localStorage.removeItem('rememberMe');
+    setCurrentUser(null);
+    localStorage.removeItem("rememberMe");
+    setCurrentView("Dashboard");
   };
+
+  const handleRegisterUser = (payload: { name: string; email: string; password: string }) => {
+    const newUser: User = {
+      id: Math.random().toString(36).slice(2),
+      name: payload.name,
+      email: payload.email,
+      password: payload.password,
+      role: "cliente",
+      status: "ativo",
+      createdAt: new Date().toLocaleDateString("pt-BR"),
+    };
+    setUsers((prev) => [...prev, newUser]);
+  };
+
+  useEffect(() => {
+    if (currentView === "Gerenciar Usuários" && currentUser?.role !== "admin") {
+      setCurrentView("Dashboard");
+    }
+  }, [currentUser, currentView]);
+
+  const sidebarItems =
+    currentUser?.role === "admin"
+      ? SIDEBAR_ITEMS
+      : SIDEBAR_ITEMS.filter((item) => item.name !== "Gerenciar Usuários");
 
   // Renderizar tela de login se não autenticado
   if (!isAuthenticated) {
     console.log("Renderizando LoginView");
-    return <LoginView onLogin={handleLogin} />;
+    return (
+      <LoginView
+        users={users}
+        onLogin={handleLogin}
+        onRegister={handleRegisterUser}
+      />
+    );
   }
 
   console.log("Renderizando Dashboard - usuário autenticado");
@@ -60,6 +89,8 @@ const App: React.FC = () => {
         toggleSidebar={toggleSidebar} 
         currentView={currentView}
         onNavigate={setCurrentView}
+        onLogout={handleLogout}
+        items={sidebarItems}
       />
 
       {/* Main Content Area */}
@@ -114,7 +145,7 @@ const App: React.FC = () => {
           ) : currentView === "WhatsApp" ? (
             <WhatsAppView />
           ) : currentView === "Gerenciar Usuários" ? (
-            <UsersView />
+            <UsersView users={users} onUsersChange={setUsers} />
           ) : currentView === "Servidores" ? (
             <ServersView />
           ) : (
@@ -126,7 +157,7 @@ const App: React.FC = () => {
 
           {/* Footer Copyright */}
           <div className="mt-12 pt-6 border-t border-[#1f1f1f] text-center text-gray-500 text-sm">
-            <p>&copy; 2024 NextFlow. Todos os direitos reservados.</p>
+            <p>&copy; 2025 NextFlow. Todos os direitos reservados.</p>
           </div>
         </div>
       </main>

@@ -103,6 +103,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  password?: string;
   role: 'admin' | 'cliente';
   status: 'ativo' | 'inativo';
   createdAt: string;

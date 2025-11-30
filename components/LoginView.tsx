@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from "lucide-react";
+import { User as UserType } from "../types";
 
 interface LoginViewProps {
-  onLogin: (email: string, password: string, remember: boolean) => void;
+  users: UserType[];
+  onLogin: (user: UserType, remember: boolean) => void;
+  onRegister: (payload: { name: string; email: string; password: string }) => void;
 }
 
-export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ users, onLogin, onRegister }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +35,24 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
       return;
     }
 
-    onLogin(email, password, rememberMe);
+    const normalizedEmail = email.trim().toLowerCase();
+    const matchedUser = users.find(
+      (user) =>
+        user.email.toLowerCase() === normalizedEmail &&
+        user.password &&
+        user.password === password
+    );
+    if (!matchedUser) {
+      setError("Credenciais inválidas. Verifique usuário e senha.");
+      return;
+    }
+
+    if (matchedUser.status !== "ativo") {
+      setError("Usuário inativo. Entre em contato com o administrador.");
+      return;
+    }
+
+    onLogin(matchedUser, rememberMe);
   };
 
   const handleRegister = (e: React.FormEvent) => {
@@ -54,10 +74,25 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
       return;
     }
 
-    // Aqui você implementaria a lógica de criação de conta
-    console.log("Criar conta:", { registerName, registerEmail, registerPassword });
+    const normalizedEmail = registerEmail.trim().toLowerCase();
+    if (users.some((user) => user.email.toLowerCase() === normalizedEmail)) {
+      setError("Este email já está cadastrado.");
+      return;
+    }
+
+    onRegister({
+      name: registerName.trim(),
+      email: normalizedEmail,
+      password: registerPassword,
+    });
+
     setError("");
+    setRegisterName("");
+    setRegisterEmail("");
+    setRegisterPassword("");
+    setRegisterConfirmPassword("");
     setIsLogin(true);
+    alert("Conta criada com sucesso! Faça login com as credenciais cadastradas.");
   };
 
   const handleForgotPassword = (e: React.FormEvent) => {
@@ -99,7 +134,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
               <h1 className="text-3xl font-bold text-white tracking-tight">NextFlow</h1>
             </div>
             <p className="text-purple-100 text-sm">
-              {isLogin ? "Gerencie seus clientes IPTV" : "Crie sua conta"}
+              {isLogin ? "" : "Crie sua conta"}
             </p>
           </div>
 
@@ -201,7 +236,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
                   <div className="w-full border-t border-[#333]"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-[#1a1a1a] px-2 text-gray-500">Não tem conta?</span>
+                  <span className="bg-[#1a1a1a] px-2 text-gray-400">Não tem conta?</span>
                 </div>
               </div>
 
@@ -354,14 +389,13 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
           {/* Footer */}
           <div className="px-6 py-4 bg-[#0f0f0f] border-t border-[#252525] text-center">
             <p className="text-xs text-gray-500">
-              © 2024 NextFlow. Todos os direitos reservados.
+              © 2025 NextFlow. Todos os direitos reservados.
             </p>
           </div>
         </div>
 
         {/* Texto abaixo do card */}
         <p className="text-center text-sm text-gray-500 mt-6">
-          Sistema de gerenciamento para revendedores IPTV
         </p>
       </div>
     </div>

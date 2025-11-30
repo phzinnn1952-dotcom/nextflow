@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { DollarSign, TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight, MoreVertical, Download, Send, Clock, Calendar, User, X, CreditCard, Filter, Check, Eye, EyeOff } from "lucide-react";
 import {
   AreaChart,
@@ -103,8 +103,71 @@ export const FinancialView: React.FC = () => {
     }
   };
 
+  const parseCurrencyValue = (value: string) => {
+    if (!value) return 0;
+    const cleaned = value
+      .replace(/[R$\s]/g, "")
+      .replace(/\./g, "")
+      .replace(/,/g, ".");
+    const parsed = Number(cleaned);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  };
+
+  const formatCurrency = (value: number) =>
+    value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    });
+
+  const totalRevenueValue = FINANCIAL_FLOW_DATA.reduce((sum, item) => sum + (item.income || 0), 0);
+  const overdueAmount = OPEN_INVOICES_DATA.filter(inv => inv.status === "vencido").reduce(
+    (sum, inv) => sum + parseCurrencyValue(inv.amount),
+    0
+  );
+  const pendingAmount = OPEN_INVOICES_DATA.filter(inv => inv.status === "a-vencer").reduce(
+    (sum, inv) => sum + parseCurrencyValue(inv.amount),
+    0
+  );
+
+  const displayValue = (value: number) =>
+    showValues ? formatCurrency(value) : "R$ •••,••";
+
   const maskValue = (value: string) => {
-    return showValues ? value : 'R$ •••,••';
+    return showValues ? value : "R$ •••,••";
+  };
+
+  const paymentMethodColorMap = useMemo(() => {
+    return PAYMENT_METHODS_DATA.reduce<Record<string, string>>((map, method) => {
+      map[method.name] = method.color;
+      return map;
+    }, {});
+  }, []);
+
+  const paymentMethodsData = useMemo(() => {
+    if (!OPEN_INVOICES_DATA.length) {
+      return PAYMENT_METHODS_DATA;
+    }
+    const counts = OPEN_INVOICES_DATA.reduce<Record<string, number>>((acc, invoice) => {
+      const method = invoice.paymentMethod || "PIX";
+      acc[method] = (acc[method] || 0) + 1;
+      return acc;
+    }, {});
+    const total = Object.values(counts).reduce((sum, value) => sum + value, 0);
+
+    if (!total) {
+      return PAYMENT_METHODS_DATA;
+    }
+
+    return Object.entries(counts).map(([name, count]) => ({
+      name,
+      value: Number(((count / total) * 100).toFixed(1)),
+      color: paymentMethodColorMap[name] ?? PAYMENT_METHODS_DATA[0].color
+    }));
+  }, [paymentMethodColorMap]);
+
+  const formatPercentage = (value: number) => {
+    return Number.isInteger(value) ? `${value}` : value.toFixed(1);
   };
 
   return (
@@ -151,7 +214,7 @@ export const FinancialView: React.FC = () => {
             </div>
           </div>
           <p className="text-gray-400 text-sm font-medium mb-1">Receita Total</p>
-          <h3 className="text-2xl font-bold text-white tracking-tight">{maskValue('R$ 67.240,00')}</h3>
+          <h3 className="text-2xl font-bold text-white tracking-tight">{displayValue(totalRevenueValue)}</h3>
         </div>
 
         {/* Faturas Vencidas */}
@@ -167,7 +230,7 @@ export const FinancialView: React.FC = () => {
           </div>
           <p className="text-gray-400 text-sm font-medium mb-1">Faturas Vencidas</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-2xl font-bold text-white tracking-tight">{maskValue('R$ 12.850,00')}</h3>
+            <h3 className="text-2xl font-bold text-white tracking-tight">{displayValue(overdueAmount)}</h3>
             <span className="text-sm text-gray-500">({overdueBills} faturas)</span>
           </div>
         </div>
@@ -181,7 +244,7 @@ export const FinancialView: React.FC = () => {
           </div>
           <p className="text-gray-400 text-sm font-medium mb-1">Faturas Pendentes</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-2xl font-bold text-white tracking-tight">{maskValue('R$ 3.850,00')}</h3>
+            <h3 className="text-2xl font-bold text-white tracking-tight">{displayValue(pendingAmount)}</h3>
             <span className="text-sm text-gray-500">({pendingBills} faturas)</span>
           </div>
         </div>
@@ -327,7 +390,7 @@ export const FinancialView: React.FC = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={PAYMENT_METHODS_DATA}
+                  data={paymentMethodsData}
                   cx="50%"
                   cy="50%"
                   innerRadius={55}
@@ -357,7 +420,7 @@ export const FinancialView: React.FC = () => {
                   }}
                   labelLine={false}
                 >
-                  {PAYMENT_METHODS_DATA.map((entry, index) => (
+                  {paymentMethodsData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -370,13 +433,13 @@ export const FinancialView: React.FC = () => {
           </div>
           {/* Custom Legend */}
           <div className="space-y-2 mt-2">
-            {PAYMENT_METHODS_DATA.map((method, index) => (
+            {paymentMethodsData.map((method, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: method.color }}></div>
                   <span className="text-sm text-gray-400">{method.name}</span>
                 </div>
-                <span className="text-sm font-bold text-white">{method.value}%</span>
+                <span className="text-sm font-bold text-white">{formatPercentage(method.value)}%</span>
               </div>
             ))}
           </div>

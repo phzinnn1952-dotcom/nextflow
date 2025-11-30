@@ -51,7 +51,8 @@ export const ClientsView: React.FC = () => {
   const [viewDate, setViewDate] = useState(new Date());
 
   const filterOptions = ["Todos", "Ativo", "Vencido", "Pendente", "Bloqueado", "Inativo"];
-  const serverOptions = dbServers.map(s => s.name);
+  const serverList = Array.isArray(dbServers) ? dbServers : [];
+  const serverOptions = serverList.map(s => s.name);
   const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   const weekDays = ["D", "S", "T", "Q", "Q", "S", "S"];
 

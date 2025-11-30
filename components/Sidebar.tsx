@@ -1,15 +1,24 @@
 import React from "react";
 import { LogOut, Hexagon } from "lucide-react";
-import { SIDEBAR_ITEMS } from "../constants";
+import { SidebarItem } from "../types";
 
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
   currentView: string;
   onNavigate: (viewName: string) => void;
+  onLogout: () => void;
+  items: SidebarItem[];
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, currentView, onNavigate }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
+  toggleSidebar,
+  currentView,
+  onNavigate,
+  onLogout,
+  items,
+}) => {
   return (
     <>
       {/* Mobile Overlay */}
@@ -40,7 +49,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, current
 
         {/* Navigation */}
         <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-          {SIDEBAR_ITEMS.map((item, index) => {
+          {items.map((item, index) => {
             const isActive = currentView === item.name;
             return (
               <button
@@ -71,7 +80,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, current
 
         {/* Footer */}
         <div className="p-4 border-t border-[#1f1f1f]">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-[#1a1a1a] rounded-lg transition-colors">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-[#1a1a1a] rounded-lg transition-colors"
+          >
             <LogOut className="w-5 h-5" />
             Sair do Sistema
           </button>
